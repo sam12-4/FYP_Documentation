@@ -1,0 +1,39 @@
+#include <Arduino.h>
+
+#define TRIG_PIN 14  // GPIO pin for Trigger
+#define ECHO_PIN 32  // GPIO pin for Echo
+
+void setup() {
+  Serial.begin(115200);            // Initialize serial communication
+  pinMode(TRIG_PIN, OUTPUT);       // Set the trigger pin as output
+  pinMode(ECHO_PIN, INPUT);        // Set the echo pin as input
+
+  Serial.println("HC-SR04 Ultrasonic Sensor Example");
+  Serial.println("Measuring distances...");
+}
+
+void loop() {
+  // Send a 10µs HIGH pulse to the Trigger pin
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  // Measure the duration of the echo pulse
+  long duration = pulseIn(ECHO_PIN, HIGH);
+
+  // Calculate the distance in centimeters
+  long distance = duration * 0.034 / 2;
+
+  // Print the result
+  if (distance > 0 && distance <= 200) {
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.println(" cm");
+  } else {
+    Serial.println("Out of range");
+  }
+
+  delay(500); // Delay between measurements
+}
