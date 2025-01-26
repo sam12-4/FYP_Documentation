@@ -3,8 +3,8 @@
 #include <ArduinoJson.h>
 
 // Replace with your WiFi credentials
-const char* ssid = "CYBER%NET%HUSSAIN%03111243682";
-const char* password = "hussain8080";
+const char* ssid = "Nensi Batra";
+const char* password = "waheguru.";
 
 // Unique device code
 const String deviceCode = "DEVICE12345"; // Replace with your specific device code

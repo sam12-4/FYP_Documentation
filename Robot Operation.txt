@@ -1,0 +1,59 @@
+Autonomous Operation
+Initialization:
+
+When the robot is powered on, it continuously monitors its surroundings using:
+Ultrasonic sensors for obstacles.
+Camera + Dirt Detection Model for identifying dirt.
+Real-Time Decision Making:
+
+The ESP32 (or the microcontroller in use) processes the model's outputs and sensor data.
+Based on this information, it decides the robot's movements and actions:
+Moves forward when the path is clear.
+Stops and turns when an obstacle is detected.
+Activates the cleaning mechanism when dirt is detected.
+How It Works Without Manual Adjustment
+No Manual Intervention Needed:
+The logic for movement and cleaning is pre-programmed into the ESP32 firmware.
+For example, if the dirt detection model outputs "dirt present," the robot knows to stop, clean, and then continue moving.
+Continuous Feedback Loop:
+The robot continuously adjusts its movements based on real-time data from the sensors and model. If new dirt is detected or an obstacle appears, it reacts accordingly.
+What You Might Mean by Manual Adjustment
+If you're referring to adjusting the thresholds or behaviors, this could be done initially during testing and fine-tuning, not during regular operation. For instance:
+
+Thresholds:
+Set the distance at which the robot recognizes an obstacle (e.g., 20 cm).
+Determine how much dirt needs to be detected before triggering the cleaning mechanism.
+Behavior:
+Program how the robot moves in tight spaces or when surrounded by obstacles.
+Once these thresholds and behaviors are set and tested, the robot should operate independently.
+
+Steps to Achieve Full Autonomy
+Develop a Comprehensive Decision-Making Algorithm:
+
+Combine the outputs of the dirt detection model and ultrasonic sensors into one program that governs all actions.
+Test in Controlled Environments:
+
+Use a mock-up environment to test different scenarios (e.g., narrow spaces, multiple obstacles, scattered dirt).
+Refine the robot's response based on test results.
+Deploy the Final Model and Logic:
+
+Once the model and movement logic are finalized, deploy them to the ESP32.
+The robot will autonomously adjust its actions based on real-time input.
+Practical Example:
+Obstacle Detected:
+
+Ultrasonic sensor: Object detected at 15 cm.
+Action: Stop, turn left, and continue forward.
+Dirt Detected:
+
+Dirt detection model: Dirt identified in the camera's field of view.
+Action: Stop, turn on cleaning mechanism, move forward to clean.
+Clear Path:
+
+No obstacles or dirt detected.
+Action: Move forward continuously.
+In conclusion:
+
+No manual control is needed during regular operation.
+Fine-tuning is required only during the development and testing phase.
+The robot operates fully autonomously by relying on the programmed logic and deployed models.
