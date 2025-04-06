@@ -840,10 +840,14 @@ void startCameraServer() {
   }
 }
 
+// void setupLedFlash(int pin) {
+// #if CONFIG_LED_ILLUMINATOR_ENABLED
+//   ledcAttach(pin, 5000, 8);
+// #else
+//   log_i("LED flash is disabled -> CONFIG_LED_ILLUMINATOR_ENABLED = 0");
+// #endif
+// }
 void setupLedFlash(int pin) {
-#if CONFIG_LED_ILLUMINATOR_ENABLED
-  ledcAttach(pin, 5000, 8);
-#else
-  log_i("LED flash is disabled -> CONFIG_LED_ILLUMINATOR_ENABLED = 0");
-#endif
+    ledcAttachPin(pin, LEDC_CHANNEL_0); // Attach the pin to LEDC channel
+    ledcSetup(LEDC_CHANNEL_0, 5000, 8); // Set up the LEDC channel with frequency 5000Hz and 8-bit resolution
 }
