@@ -8,6 +8,11 @@
 #define echoPin 2
 #define trigPin 4
 long duration, distance;
+// Define variables for ultrasonic sensor filtering
+#define ULTRASONIC_SAMPLES 5  // Number of samples to average
+int distanceArray[ULTRASONIC_SAMPLES];  // Array to store distance readings
+int distanceArrayIndex = 0;  // Current index in the array
+unsigned long pulseInTimeout = 25000;  // Timeout for pulseIn in microseconds
 
 // Motor A (Right Motor) pins
 #define IN1 27
@@ -466,17 +471,48 @@ void turnFanOff() {
 
 // ---------- DISTANCE SENSOR FUNCTIONS ----------
 void readDistance() {
+  // Clear the trigger pin
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
+  
+  // Set the trigger pin HIGH for 10 microseconds
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
   
-  duration = pulseIn(echoPin, HIGH);
-  distance = duration / 58.2;
+  // Read the echo pin, returns the sound wave travel time in microseconds
+  // Add timeout to avoid blocking if echo isn't received
+  duration = pulseIn(echoPin, HIGH, pulseInTimeout);
+  
+  // Calculate the distance only if we got a valid pulse
+  if (duration > 0) {
+    // Calculate distance in cm: speed of sound (340 m/s) / 2 (round trip)
+    // 340 * 100 / 1000000 / 2 = 0.017, so distance = duration * 0.017
+    // Alternatively: duration / 58.2
+    int currentDistance = duration / 58.2;
+    
+    // Filter out unreasonable values (adjust these thresholds as needed)
+    if (currentDistance > 0 && currentDistance < 400) {
+      // Store the reading in the array
+      distanceArray[distanceArrayIndex] = currentDistance;
+      
+      // Update the index for the next reading
+      distanceArrayIndex = (distanceArrayIndex + 1) % ULTRASONIC_SAMPLES;
+      
+      // Calculate the average of all readings
+      long sum = 0;
+      for (int i = 0; i < ULTRASONIC_SAMPLES; i++) {
+        sum += distanceArray[i];
+      }
+      distance = sum / ULTRASONIC_SAMPLES;
+    }
+    // If invalid reading, don't update distance (keep previous value)
+  }
   
   // For debugging
-  Serial.print("Distance: ");
+  Serial.print("Duration: ");
+  Serial.print(duration);
+  Serial.print(" μs, Distance: ");
   Serial.print(distance);
   Serial.println(" cm");
 }
@@ -488,6 +524,10 @@ void setup() {
   // -------- Distance Sensor Setup --------
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
+  // Initialize distance array with zeros
+  for (int i = 0; i < ULTRASONIC_SAMPLES; i++) {
+    distanceArray[i] = 0;
+  }
   debugPrint("Distance sensor pins initialized");
 
   // -------- Motor Control Setup --------
